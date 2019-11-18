@@ -4,7 +4,7 @@ import time
 
 start = time.time()
 
-url = 'https://yeniemlak.az/elan/axtar?emlak=1&elan_nov=1&seher=0&metro=0&qiymet=&qiymet2=&mertebe=&mertebe2=&otaq=&otaq2=&sahe_m=&sahe_m2=&sahe_s=&sahe_s2=&page='
+url = 'https://yeniemlak.az/elan/axtar?emlak=1&elan_nov=1&seher=0&metro=0&qiymet=&qiymet2=&mertebe=&mertebe2=&otaq=&otaq2=&sahe_m=&sahe_m2=&sahe_s=&sahe_s2='
 npage = 2
 sleep = 3
 
@@ -33,7 +33,7 @@ for src in range(1,npage+1):
         for paragraph in soup2.find('div', class_='text'):
             f.write(paragraph.string + '\n\n')
             npost = npost + 1
-            #print(paragraph.string,'\n')
+            print(paragraph.string,'\n')
 
 f.close()
 
