@@ -4,9 +4,9 @@ import time
 
 start = time.time()
 
-url = 'https://yeniemlak.az/elan/axtar?emlak=1&elan_nov=1&seher=0&metro=0&qiymet=&qiymet2=&mertebe=&mertebe2=&otaq=&otaq2=&sahe_m=&sahe_m2=&sahe_s=&sahe_s2='
-npage = 2
-sleep = 3
+url = 'https://yeniemlak.az/elan/axtar?elan_nov=1&emlak=1&menzil_nov=&qiymet=&qiymet2=&mertebe=3&mertebe2=8&otaq=4&otaq2=4&sahe_m=&sahe_m2=&sahe_s=&sahe_s2=&seher=7&rayon=4&menteqe=0&metro=0'
+npage = 7
+sleep = 4
 
 def lis(table):
     rows = table.findAll('tr')
@@ -21,7 +21,8 @@ f= open("output.txt","w+")
 npost = 0
 
 for src in range(1,npage+1):
-    source = urllib.request.urlopen(url+str(src)).read()
+    print("reading page " + str(src))
+    source = urllib.request.urlopen(url+'=&page='+str(src)).read()
     soup = BeautifulSoup(source,'html.parser',from_encoding="iso-8859-1")
 
     tables = soup.find_all('table', {'class': 'list'})
@@ -33,7 +34,7 @@ for src in range(1,npage+1):
         for paragraph in soup2.find('div', class_='text'):
             f.write(paragraph.string + '\n\n')
             npost = npost + 1
-            print(paragraph.string,'\n')
+            #print(paragraph.string,'\n')
 
 f.close()
 
