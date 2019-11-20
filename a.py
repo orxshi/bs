@@ -4,7 +4,7 @@ import time
 
 start = time.time()
 
-url = 'https://yeniemlak.az/elan/axtar?elan_nov=1&emlak=1&menzil_nov=&qiymet=&qiymet2=&mertebe=3&mertebe2=8&otaq=4&otaq2=4&sahe_m=&sahe_m2=&sahe_s=&sahe_s2=&seher=7&rayon=4&menteqe=0&metro=0'
+url = 'https://bina.az/baki/alqi-satqi/menziller'
 npage = 7
 sleep = 4
 
@@ -32,9 +32,9 @@ for src in range(1,npage+1):
         source2 = urllib.request.urlopen('https://yeniemlak.az'+lis(t)).read()
         soup2 = BeautifulSoup(source2,'lxml')
         for paragraph in soup2.find('div', class_='text'):
-            f.write(paragraph.string + '\n\n')
+            #f.write(paragraph.string + '\n\n')
             npost = npost + 1
-            #print(paragraph.string,'\n')
+            print(paragraph.string,'\n')
 
 f.close()
 
