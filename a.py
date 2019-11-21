@@ -133,11 +133,18 @@ def read_post_bina(npage, url, sleep, preurl, f, nroom, post, rayon, post_per_pa
     bar.finish()
 
 
-def midurl(site, minfloor, maxfloor, nroom, rayon_num, rayon):
+def midurl(site, minfloor, maxfloor, nroom, rayon_num, rayon, yenitikili):
     if site == 'yeniemlak':
-        return '/elan/axtar?elan_nov=1&emlak=1&menzil_nov=&qiymet=&qiymet2=&mertebe=' + str(minfloor) +'&mertebe2=' + str(maxfloor) + '&otaq=' + str(nroom) + '&otaq2=' + str(nroom) + '&sahe_m=&sahe_m2=&sahe_s=&sahe_s2=&seher=7&rayon=' + str(rayon_num) + '&menteqe=0&metro=0'
+        if yenitikili == 1:
+            return '/elan/axtar?elan_nov=1&emlak=1&menzil_nov=' + str(1) + '&qiymet=&qiymet2=&mertebe=' + str(minfloor) +'&mertebe2=' + str(maxfloor) + '&otaq=' + str(nroom) + '&otaq2=' + str(nroom) + '&sahe_m=&sahe_m2=&sahe_s=&sahe_s2=&seher=7&rayon=' + str(rayon_num) + '&menteqe=0&metro=0'
+        else:
+            return '/elan/axtar?elan_nov=1&emlak=1&menzil_nov=' + str(2) + '&qiymet=&qiymet2=&mertebe=' + str(minfloor) +'&mertebe2=' + str(maxfloor) + '&otaq=' + str(nroom) + '&otaq2=' + str(nroom) + '&sahe_m=&sahe_m2=&sahe_s=&sahe_s2=&seher=7&rayon=' + str(rayon_num) + '&menteqe=0&metro=0'
+
     elif site == 'bina':
-        return '/baki/' + rayon + '/alqi-satqi/menziller/' + str(nroom) + '-otaqli?floor_from=' + str(minfloor) + '&floor_to=' + str(maxfloor)
+        if yenitikili == 1:
+            return '/baki/' + rayon + '/alqi-satqi/menziller/yenitikili/' + str(nroom) + '-otaqli?floor_from=' + str(minfloor) + '&floor_to=' + str(maxfloor)
+        else:
+            return '/baki/' + rayon + '/alqi-satqi/menziller/kohnetikili/' + str(nroom) + '-otaqli?floor_from=' + str(minfloor) + '&floor_to=' + str(maxfloor)
 
 
 def rayon_num_yeniemlak(rayon):
@@ -148,9 +155,11 @@ def rayon_num_yeniemlak(rayon):
     elif rayon == 'nesimi':
         return 4
 
-def outfilename(site, rayon, nroom):
-    return site + '_' + rayon + '_otag' + str(nroom) + '.txt'
-
+def outfilename(site, rayon, nroom, yenitikili):
+    if yenitikili == 1:
+        return site + '_' + rayon + '_otag' + str(nroom) + '_yenitikili' + '.txt'
+    else:
+        return site + '_' + rayon + '_otag' + str(nroom) + '_kohnetikili' + '.txt'
 
 
 def main():
@@ -173,12 +182,18 @@ def main():
       type=str,
       default='yeniemlak',
     )
+    CLI.add_argument(
+      "--yenitikili",
+      type=int,
+      default=1,
+    )
 
     args = CLI.parse_args()
 
     site = args.site
     rayons = args.rayon
     nrooms = args.nroom
+    yenitikili = args.yenitikili
     minfloor = 3
     maxfloor = 8
     sleep = 5
@@ -198,7 +213,7 @@ def main():
 
             print("room: " + str(nroom))
 
-            of = outfilename(site, rayon, nroom)
+            of = outfilename(site, rayon, nroom, yenitikili)
 
             if os.path.isfile(of) == True:
                 read_from_existing(of, nroom, post)
@@ -208,7 +223,7 @@ def main():
             f = open(of,"w+")
 
             preurl = get_preurl(site)
-            url = preurl + midurl(site, minfloor, maxfloor, nroom, rayon_num, rayon)
+            url = preurl + midurl(site, minfloor, maxfloor, nroom, rayon_num, rayon, yenitikili)
 
             [npost, npage] = number_of_pages(url, post_per_page, site)
 
