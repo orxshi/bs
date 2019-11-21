@@ -39,3 +39,7 @@ def categorize(posts):
     print(len(category[2]))
     print(len(category[3]))
     print(len(category[4]))
+
+    for c in category[1]:
+        print(c.text)
+    
