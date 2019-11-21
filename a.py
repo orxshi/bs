@@ -5,6 +5,24 @@ import math
 import sys
 from post import *
 import os.path
+import argparse
+
+
+CLI = argparse.ArgumentParser()
+CLI.add_argument(
+  "--rayon",
+  nargs="*",
+  type=int,
+  default=[1, 3, 4],
+)
+CLI.add_argument(
+  "--nroom",
+  nargs="*",
+  type=int,
+  default=[1, 2, 3, 4],
+)
+
+args = CLI.parse_args()
 
 
 
@@ -12,13 +30,12 @@ import os.path
 #nerimanov: 3
 #nesimi: 4
 
-rayons = [1, 3, 4]
-nrooms = [1, 2, 3, 4]
+rayons = args.rayon
+nrooms = args.nroom
 minfloor = 3
 maxfloor = 8
-sleep = 4
-totalnroom = 4
 post_per_page = 25
+sleep = 4
 
 
 def lis(table):
@@ -41,8 +58,8 @@ def number_of_pages(url):
     soup_root = BeautifulSoup(source_root,'html.parser',from_encoding="iso-8859-1")
 
     ee = soup_root.find('div', class_='count').find('b')
-    npage = math.ceil([int(s) for s in ee.string.split() if s.isdigit()][0])
-    return npage
+    npage = [int(s) for s in ee.string.split() if s.isdigit()][0]
+    return math.ceil((npage / post_per_page))
 
 
 for rayon in rayons:
@@ -54,7 +71,7 @@ for rayon in rayons:
     elif rayon == 4:
         srayon = 'nesimi'
 
-    post = totalnroom * [[]]
+    post = [[] for i in range(len(nrooms))]
 
     print("rayon: " + srayon)
 
@@ -66,7 +83,7 @@ for rayon in rayons:
 
         if os.path.isfile(outfilename) == True:
             read_from_existing(outfilename, nroom, post)
-            print('reading from existing file: ' outfilename)
+            print('reading from existing file: ' + outfilename)
             continue
 
         f = open(outfilename,"w+")
@@ -74,6 +91,7 @@ for rayon in rayons:
         url = 'https://yeniemlak.az/elan/axtar?elan_nov=1&emlak=1&menzil_nov=&qiymet=&qiymet2=&mertebe=' + str(minfloor) +'&mertebe2=' + str(maxfloor) + '&otaq=' + str(nroom) + '&otaq2=' + str(nroom) + '&sahe_m=&sahe_m2=&sahe_s=&sahe_s2=&seher=7&rayon=' + str(rayon) + '&menteqe=0&metro=0'
 
         npage = number_of_pages(url)
+        print('npage: ' + str(npage))
 
         npost = 0
 
@@ -87,11 +105,12 @@ for rayon in rayons:
 
             tables = soup.find_all('table', {'class': 'list'})
 
-            for t in tables:
+            for it, t in enumerate(tables):
                 time.sleep(sleep)
                 source2 = urllib.request.urlopen('https://yeniemlak.az'+lis(t)).read()
                 soup2 = BeautifulSoup(source2,'lxml')
                 for paragraph in soup2.find('div', class_='text'):
+                    print("post: " + str(it))
                     f.write(paragraph.string + '\n' + '--------------------------------' + '\n')
                     npost = npost + 1
                     #print(paragraph.string,'\n')
@@ -101,7 +120,9 @@ for rayon in rayons:
 
         end = time.time()
 
+        total = end - start
+        perpost = total / npost
+        #print(perpost)
 
-total = end - start
-perpost = total / npost
-print(perpost)
+
+#categorize(post[0])
